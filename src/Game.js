@@ -58,6 +58,7 @@ class Board extends React.Component {
       const squares = this.state.squares.slice();
       if (client.user !== userID) {
         squares[client.position] = 'O';
+        value = client.position;
       }
 
       this.setState({
@@ -93,24 +94,6 @@ class Board extends React.Component {
       xIsNext: !this.state.xIsNext,
     });
   }
-
-  // handleClick(i) {
-  //   const squares = this.state.squares.slice();
-
-  //   if (this.state.isEnded || squares[i]) {
-  //     return;
-  //   }
-
-  //   this.addNote(i);
-
-  //   value = i;
-  //   squares[i] = this.state.xIsNext ? 'X' : 'O';
-
-  //   this.setState({
-  //     squares: squares,
-  //     xIsNext: !this.state.xIsNext,
-  //   });
-  // }
 
   handleClickReset() {
 
