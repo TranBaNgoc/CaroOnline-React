@@ -40,7 +40,7 @@ class Board extends React.Component {
 
     this.state = {
       squares: Array(400).fill(null),
-      xIsNext: true,
+      isYouNext: true,
       isEnded: false,
     };
   }
@@ -63,6 +63,7 @@ class Board extends React.Component {
 
       this.setState({
         squares: squares,
+        isYouNext: !this.state.isYouNext,
       });
 
     });
@@ -80,7 +81,7 @@ class Board extends React.Component {
   handleClick(i) {
     const squares = this.state.squares.slice();
 
-    if (this.state.isEnded || squares[i]) {
+    if ((this.state.isEnded || squares[i]) && !isYouNext) {
       return;
     }
 
@@ -91,7 +92,7 @@ class Board extends React.Component {
 
     this.setState({
       squares: squares,
-      xIsNext: !this.state.xIsNext,
+      isYouNext: !this.state.isYouNext,
     });
   }
 
@@ -101,7 +102,7 @@ class Board extends React.Component {
 
     this.setState({
       squares: Array(400).fill(null),
-      xIsNext: true,
+      isYouNext: true,
       isEnded: false,
     });
   }
@@ -114,7 +115,7 @@ class Board extends React.Component {
       this.state.isEnded = true;
       status = 'Người chiến thắng là: ' + winner;
     } else {
-      status = 'Lượt tiếp theo là: ' + (this.state.xIsNext ? 'X' : 'O');
+      status = 'Lượt tiếp theo là: ' + (this.state.isYouNext ? 'X' : 'O');
     }
 
     let board = [];
@@ -149,8 +150,6 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
-
-
   render() {
     return (
       <div className="game">
