@@ -92,7 +92,7 @@ class Board extends React.Component {
 
     this.setState({
       squares: squares,
-      isYouNext: !this.state.isYouNext,
+      
     });
   }
 
