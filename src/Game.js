@@ -59,12 +59,13 @@ class Board extends React.Component {
       if (client.user !== userID) {
         squares[client.position] = 'O';
         value = client.position;
+        this.setState({
+          squares: squares,
+          isYouNext: true,
+        });
       }
 
-      this.setState({
-        squares: squares,
-        isYouNext: !this.state.isYouNext,
-      });
+      
 
     });
   }
@@ -92,7 +93,7 @@ class Board extends React.Component {
 
     this.setState({
       squares: squares,
-      
+      isYouNext: false,
     });
   }
 
