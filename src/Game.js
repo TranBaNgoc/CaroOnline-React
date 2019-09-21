@@ -81,7 +81,7 @@ class Board extends React.Component {
   handleClick(i) {
     const squares = this.state.squares.slice();
 
-    if ((this.state.isEnded || squares[i]) && this.state.isYouNext) {
+    if (this.state.isEnded || squares[i] || !this.state.isYouNext) {
       return;
     }
 
