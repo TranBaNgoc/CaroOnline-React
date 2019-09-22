@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import './style.css';
 // import  {DB_CONFIG}  from './firebase'
 import firebase from 'firebase/app'
@@ -7,7 +8,8 @@ const MaxHeight = 20;
 const MaxWidth = 20;
 
 const userID = Math.random();
-
+var roomID;
+var roomKey;
 const DB_CONFIG = {
   apiKey: "AIzaSyDFKoGN9MKOR_Idc_skJlemhlbpoD-YNms",
   authDomain: "carodb-cb9ca.firebaseapp.com",
@@ -18,12 +20,12 @@ const DB_CONFIG = {
   appId: "1:69254649593:web:735917ebdbd1a7bde03428"
 };
 
-
+var app = firebase.initializeApp(DB_CONFIG);
 var value = -1;
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className="square" onClick={props.onClick} key={props.value}>
       {props.value}
     </button>
   );
@@ -34,10 +36,6 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
 
-    this.app = firebase.initializeApp(DB_CONFIG);
-    this.database = this.app.database().ref().child('Room');
-    this.clientsRef = this.app.database().ref('Room')
-
     this.state = {
       squares: Array(400).fill(null),
       isYouNext: true,
@@ -46,15 +44,15 @@ class Board extends React.Component {
   }
 
   addNote(i) {
+    this.database = app.database().ref().child('Room').child(roomKey).child('Game');
     this.database.push().set({ user: userID, position: i });
   }
 
-  componentDidMount(){
-    this.clientsRef.on('child_added', snapshot => {
+  componentDidMount() {
+    this.room = app.database().ref('Room').child(roomKey).child('Game');
+    this.room.on('child_added', snapshot => {
       const client = snapshot.val();
       client.key = snapshot.key;
-      console.log(client.position);
-
       const squares = this.state.squares.slice();
       if (client.user !== userID) {
         squares[client.position] = 'O';
@@ -64,10 +62,9 @@ class Board extends React.Component {
           isYouNext: true,
         });
       }
-
-      
-
     });
+
+
   }
 
   renderSquare(i) {
@@ -75,6 +72,7 @@ class Board extends React.Component {
       <Square
         value={this.state.squares[i]}
         onClick={() => this.handleClick(i)}
+        
       />
     );
   }
@@ -90,7 +88,6 @@ class Board extends React.Component {
 
     value = i;
     squares[i] = 'X';
-
     this.setState({
       squares: squares,
       isYouNext: false,
@@ -99,7 +96,7 @@ class Board extends React.Component {
 
   handleClickReset() {
 
-    this.clientsRef.remove();
+    this.room.remove();
 
     this.setState({
       squares: Array(400).fill(null),
@@ -151,6 +148,7 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+
   render() {
     return (
       <div className="game">
@@ -160,6 +158,51 @@ class Game extends React.Component {
       </div>
     );
   }
+}
+
+class Room extends React.Component {
+
+  handleClick() {
+    roomID = this.existRoom.value;
+
+    var query = app.database().ref("Room");
+    query.once("value")
+      .then(function (snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+          var childData = childSnapshot.val();
+          console.log(childData.RoomID, roomID);
+          if (childData.RoomID === roomID) {
+            roomKey = childSnapshot.key;
+            ReactDOM.render(<Game />, document.getElementById('root'));
+            return;
+          }
+        });
+      });
+  }
+
+  handleCreateRoomClick() {
+    roomID = Math.floor(Math.random() * 100000) + 100000 + "";
+    this.database = app.database().ref().child('Room');
+    this.database.push({ RoomID: roomID }).then(snap => {
+      roomKey = snap.key;
+      ReactDOM.render(<Game />, document.getElementById('root'));
+    });
+    
+  }
+
+  render() {
+    return (
+      <div>
+        <form>
+          <input type="text" ref={(c) => this.existRoom = c} ></input>
+          <button type="button" onClick={() => this.handleClick()} >Vào phòng</button>
+        </form>
+        <form>
+          <button type="button" onClick={() => this.handleCreateRoomClick()} >Tạo phòng</button>
+        </form>
+      </div>
+    )
+  };
 }
 
 function calculateWinner(squares) {
@@ -388,4 +431,4 @@ function isBlock2Ends(squares, type, competitor) {
   return false;
 }
 
-export default Game;
+export default Room;
