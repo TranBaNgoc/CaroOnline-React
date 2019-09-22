@@ -139,7 +139,7 @@ class Board extends React.Component {
       <div>
         <div className="status">{status}
           <button style={Style} onClick={() => this.handleClickReset()}>Chơi lại</button>
-          <label>ID phòng: {roomID}</label>
+          <label float='left'>ID phòng: {roomID}</label>
         </div>
         {board}
       </div>
