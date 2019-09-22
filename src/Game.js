@@ -139,6 +139,7 @@ class Board extends React.Component {
       <div>
         <div className="status">{status}
           <button style={Style} onClick={() => this.handleClickReset()}>Chơi lại</button>
+          <label>ID phòng: {roomID}</label>
         </div>
         {board}
       </div>
@@ -197,6 +198,9 @@ class Room extends React.Component {
           <input type="text" ref={(c) => this.existRoom = c} ></input>
           <button type="button" onClick={() => this.handleClick()} >Vào phòng</button>
         </form>
+        <div>
+          Hoặc
+        </div>
         <form>
           <button type="button" onClick={() => this.handleCreateRoomClick()} >Tạo phòng</button>
         </form>
